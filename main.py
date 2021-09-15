@@ -41,83 +41,95 @@ class ThisBot(discord.Client):
             else:
                 await message.delete()
 
-        if message.content.startswith('랜덤재생'):
-            for file in os.listdir(os.getcwd()):
-                if(".mp3" in file):
-                    stack.append(file.replace('.mp3', ''))        
+            if message.content.startswith('랜덤재생'):
+                for file in os.listdir(os.getcwd()):
+                    if(".mp3" in file):
+                        stack.append(file.replace('.mp3', ''))        
 
-        if(self.vc == None):                        
-            voice_channel = message.author.voice.channel
-            msg_channel = message.channel
-            vc = await voice_channel.connect()            
-            self.vc = vc
-            music = message.content
-            self.music = music
+            if(self.vc == None):                        
+                voice_channel = message.author.voice.channel
+                msg_channel = message.channel
+                vc = await voice_channel.connect()            
+                self.vc = vc
+                music = message.content
+                self.music = music
 
-            if(len(stack) != 0):
-                self.music = stack[0]
-                del stack[0]
-            
-            while(True):                          
-                self.player = self.vc.play(discord.FFmpegPCMAudio(executable="C:/Users/home/Documents/app/ffmpeg/bin/ffmpeg.exe", source= self.music + ".mp3"))  
-                     
-                number = 100
-                counter = 0
-                async for x in msg_channel.history(limit = number):
-                    if counter < number:
-                        if(x.author.name == "아이유봇"):
-                            await x.delete()
-                            counter += 1
-                            await asyncio.sleep(1.2)                
-
-                await message.channel.send(make_msg(self.music))
+                if(len(stack) != 0):
+                    self.music = stack[0]
+                    del stack[0]
                 
-                while(self.vc.is_playing() or len(stack) == 0):
-                    await asyncio.sleep(1)
-                
-                if(self.repeat == True):
-                    self.music = music
-                else:
-                    if(len(stack) >= 1):                
-                        self.music = stack[0]
-                        del stack[0]                           
+                while(True):                          
+                    self.player = self.vc.play(discord.FFmpegPCMAudio(executable="C:/Users/home/Documents/app/ffmpeg/bin/ffmpeg.exe", source= self.music + ".mp3"))  
+                        
+                    number = 100
+                    counter = 0
+                    async for x in msg_channel.history(limit = number):
+                        if counter < number:
+                            if(x.author.name == "아이유봇"):
+                                await x.delete()
+                                counter += 1
+                                await asyncio.sleep(1.2)                
+
+                    await message.channel.send(make_msg(self.music, self.repeat))
+                    
+                    while(self.vc.is_playing() or len(stack) == 0):
+                        await asyncio.sleep(1)
+                    
+                    if(self.repeat == True):
+                        self.music = music
                     else:
-                        self.music = None 
-        else:
-            if message.content.startswith('랜덤화'):
-                random.shuffle(stack)
+                        if(len(stack) >= 1):                
+                            self.music = stack[0]
+                            del stack[0]                           
+                        else:
+                            self.music = None 
+            else:
+                if message.content.startswith('랜덤화'):
+                    random.shuffle(stack)
 
-                msg_channel = message.channel
-                number = 100
-                counter = 0
-                async for x in msg_channel.history(limit = number):
-                    if counter < number:
-                        if(x.author.name == "아이유봇"):
-                            await x.delete()
-                            counter += 1
-                            await asyncio.sleep(1.2)                
+                    msg_channel = message.channel
+                    number = 100
+                    counter = 0
+                    async for x in msg_channel.history(limit = number):
+                        if counter < number:
+                            if(x.author.name == "아이유봇"):
+                                await x.delete()
+                                counter += 1
+                                await asyncio.sleep(1.2)                
 
-                await message.channel.send(make_msg(self.music))
-            elif message.content.startswith('반복'):
-                if(self.repeat == False):
-                    self.repeat = True
-                else:
-                    self.repeat = False
+                    await message.channel.send(make_msg(self.music, self.repeat))
+                elif message.content.startswith('반복'):
+                    if(self.repeat == False):
+                        self.repeat = True
+                    else:
+                        self.repeat = False
 
-            if(message.content + ".mp3" in os.listdir(os.getcwd())):                
-                stack.append(message.content)   
+                    msg_channel = message.channel
+                    number = 100
+                    counter = 0
+                    async for x in msg_channel.history(limit = number):
+                        if counter < number:
+                            if(x.author.name == "아이유봇"):
+                                await x.delete()
+                                counter += 1
+                                await asyncio.sleep(1.2)                
 
-                msg_channel = message.channel
-                number = 100
-                counter = 0
-                async for x in msg_channel.history(limit = number):
-                    if counter < number:
-                        if(x.author.name == "아이유봇"):
-                            await x.delete()
-                            counter += 1
-                            await asyncio.sleep(1.2)                
+                    await message.channel.send(make_msg(self.music, self.repeat))
 
-                await message.channel.send(make_msg(self.music))
+                if(message.content + ".mp3" in os.listdir(os.getcwd())):                
+                    stack.append(message.content)   
+
+                    msg_channel = message.channel
+                    number = 100
+                    counter = 0
+                    async for x in msg_channel.history(limit = number):
+                        if counter < number:
+                            if(x.author.name == "아이유봇"):
+                                await x.delete()
+                                counter += 1
+                                await asyncio.sleep(1.2)                
+
+                    await message.channel.send(make_msg(self.music, self.repeat))
            
 bot=ThisBot()
 bot.run(token)
